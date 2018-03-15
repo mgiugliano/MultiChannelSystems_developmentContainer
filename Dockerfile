@@ -18,7 +18,7 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 RUN apt-get update --fix-missing \
     && apt-get install -y build-essential \
-        && apt-get install -y wget git vim \
+        && apt-get install -y wget git vim locales \
         && rm -rf /var/lib/apt/lists/*
 
 COPY boost_1_44_0.tar.gz /tmp
@@ -50,6 +50,9 @@ RUN cd /tmp \
        && cd /tmp \
        && rm -r boost_1_44_0 \
        && rm -r MC_StreamAnsiLib
+
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+       && locale-gen
 
 # The libraries and includes are in /usr/local/lib and /usr/local/include
 
