@@ -17,9 +17,10 @@ Generating the libraries for whatever host operating system is then a matter of
 Unfortunately, the (old) vendor libraries in our hands are written in C++ and call some
 later deprecated functions of dependent libraries (i.e. Lib Boost). This means that,
 in order to compile the vendor library, one needs to have installed the correct version
-of the Boost libraries (i.e. v. 1.44).
+of the Boost libraries (i.e. v. 1.44). Note that only "system" and "filesystem" of the boost
+libraries are used (and need to be installed/recompiled).
 
-On a modern release of Debian (i.e. read probably a "newer version of the compiler and standard
+On a modern release of Debian (i.e. read probably a "newer version of the GCC compiler and standard
 library"), I failed to install and compile Lib Boost 1.44. As a consequence, I failed to compile
 the vendor libraries.
 
@@ -43,10 +44,15 @@ Note that the additional files released here are
 - The vendor source code library very slightly adapted in terms of Makefile to compile it
 
 
+> How do I use the Docker container? You use it as a linux (development) box upon launching it by
+
+				docker run -it --rm -v "/hostpath/to/yourhome/:/opt" mcs_env
+This starts an interactive shell session, mounting the host operating system folder specified, in the
+local container folder called /opt. gcc, make, etc. are available.
+
 Note: The output of the command ldd returns the list of the shared libraries required by one of our code.
 
 ldd channel_extract
-
         linux-vdso.so.1 =>  (0x00007fff85fff000)
         libboost_filesystem.so.1.42.0 => /usr/lib/libboost_filesystem.so.1.42.0 (0x00007ffce52a9000)
         libboost_system.so.1.42.0 => /usr/lib/libboost_system.so.1.42.0 (0x00007ffce50a5000)
@@ -58,7 +64,10 @@ ldd channel_extract
         librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007ffce4154000)
         /lib64/ld-linux-x86-64.so.2 (0x00007ffce54d4000)
 
-
+However, I managed to have the code statically compiled by the flags "static -static-libgcc -static-libstdc++"
+and I exported the actual binary (a couple of MB larger than when dynamically linked to the libraries) to 
+a real linux box: it worked!!! This means that this development method can be used to create executable that
+will run on any linux box.
 
 
 
